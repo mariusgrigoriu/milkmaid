@@ -9,7 +9,8 @@ describe "RTM" do
   end
 
   it "loads the configuration dotfile" do
-    YAML.should_receive(:load_file)
+    ENV['HOME'] = 'testhome'
+    YAML.should_receive(:load_file).with('testhome/.rtm')
     lib
   end
 
@@ -25,6 +26,7 @@ describe "RTM" do
       RTM::RTM.stub_chain(:new, :auth) { auth_double }
       auth_double.stub(:url) { 'http://testurl' }
       auth_double.stub(:frob) { 'testfrob' }
+      File.stub(:open)
     end
 
     it "directs the user to setup auth" do
