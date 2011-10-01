@@ -33,6 +33,7 @@ Main {
     mode :finish do
       def run
         rtm.auth_finish
+        puts 'Authentication token saved.'
       end
     end
   end
