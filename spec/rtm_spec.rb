@@ -26,31 +26,44 @@ describe "RTM" do
       RTM::RTM.stub_chain(:new, :auth) { auth_double }
       auth_double.stub(:url) { 'http://testurl' }
       auth_double.stub(:frob) { 'testfrob' }
+      File.stub(:open)
     end
 
-    describe "authentication setup" do
-      before do
-        File.stub(:open)
-      end
-
+    describe "setup" do
       it "directs the user to setup auth" do
         lib.auth_start.should == 'http://testurl'
       end
 
       it "stores the frob in configuration" do
-        io_double = double('io')
-        File.should_receive(:open).and_yield(io_double)
-        YAML.should_receive(:dump).with({:frob=>"testfrob"}, io_double)
+        test_stores_in_configuration({:frob=>"testfrob"})
         lib.auth_start
       end
     end
 
-    describe "authentication completion" do
-      it "loads the frob from the dotfile" do
+    describe "completion" do
+      before do
         YAML.stub(:load_file) { {:frob=>'testfrob'} }
+        auth_double.stub(:frob=)
+        auth_double.stub(:get_token) {'testtoken'}
+      end
+
+      it "loads the frob from the configuration" do
         auth_double.should_receive(:frob=).with('testfrob')
+        lib.auth_finish
+      end
+
+      it "stores the auth token in the dotfile" do
+        test_stores_in_configuration({
+                                    :frob=>'testfrob',
+                                    :token=>'testtoken'})
         lib.auth_finish
       end
     end
   end
+end
+
+def test_stores_in_configuration(config)
+  io_double = double('io')
+  File.should_receive(:open).and_yield(io_double)
+  YAML.should_receive(:dump).with(config, io_double)
 end

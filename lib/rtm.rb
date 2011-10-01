@@ -19,12 +19,19 @@ class RTM_CLI
     auth = @rtm.auth
     url = auth.url
     @config[:frob] = auth.frob
-    File.open(@config_file, 'w') { |f| YAML.dump(@config, f) }
+    save_config
     url
   end
 
   def auth_finish
     auth = @rtm.auth
     auth.frob = @config[:frob]
+    @config[:token] = auth.get_token
+    save_config
+  end
+
+  private
+  def save_config
+    File.open(@config_file, 'w') { |f| YAML.dump(@config, f) }
   end
 end
