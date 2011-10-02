@@ -18,11 +18,11 @@ Main {
   mode :list do
     def run
       begin
-        rtm.incomplete_tasks do |taskseries|
+        rtm.incomplete_tasks.each do |taskseries|
           text = "#{taskseries['name']}"
           text << "(R)" unless taskseries['rrule'].nil?
           text << " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
-          "%A %b %d, %Y %I:%M %p")}"
+          "%A %b %d, %Y %I:%M %p")}" unless taskseries['task']['due'].empty?
           color = {
             '1'=>[234, 82, 0], 
             '2'=>[0, 96, 191], 

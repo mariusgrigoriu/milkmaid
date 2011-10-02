@@ -28,13 +28,17 @@ describe "RTM" do
     end
   end
 
-  it "yields all incomplete tasks" do
-    first = {"name"=>"first", "id"=>"133493173", "task"=>{"completed"=>""}}
-    second = {"name"=>"second", "id"=>"123456789", "task"=>{"completed"=>""}}
+  it "yields all incomplete tasks in order of priority then due date" do
+    a = {"name"=>"a", "task"=>{"completed"=>"", "priority"=>"1", "due"=>""}}
+    b = {"name"=>"b", "task"=>{"completed"=>"", "priority"=>"1",
+                                    "due"=>"2011-10-02T02:52:58Z"}}
+    c = {"name"=>"c", "task"=>{"completed"=>"", "priority"=>"N",
+                                    "due"=>"2012-10-02T02:52:58Z"}}
+    d = {"name"=>"d", "task"=>{"completed"=>"", "priority"=>"N",
+                                    "due"=>"2011-10-02T02:52:58Z"}}
     RTM::RTM.stub_chain(:new, :tasks, :get_list) { 
       {"tasks"=>{"list"=>[{"id"=>"21242147", "taskseries"=>[
-        first,
-        second,
+        a, b, c, d,
         {"name"=>"done task", "task"=>{"completed"=>"2011-10-02T02:52:58Z"}}
       ]}, 
       {"id"=>"21242148"}, 
@@ -45,9 +49,7 @@ describe "RTM" do
       "rev"=>"4k555btb3vcwscc8g44sog8kw4ccccc"}, 
       "stat"=>"ok"}
     }
-    results = []
-    lib.incomplete_tasks {|t| results << t}
-    results.should == [first, second]
+    lib.incomplete_tasks.should == [b, a, d, c]
   end
 
   describe "authentication" do
