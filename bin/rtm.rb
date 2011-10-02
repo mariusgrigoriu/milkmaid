@@ -32,8 +32,14 @@ Main {
 
     mode :finish do
       def run
-        rtm.auth_finish
-        puts 'Authentication token saved.'
+        begin
+          rtm.auth_finish
+          puts 'Authentication token saved.'
+        rescue RTM::VerificationException
+          puts 'Invalid frob. Did you visit the link from `rtm auth start`?'
+        rescue RuntimeError
+          puts "Frob does not exist. Did you run `#{__FILE__} auth start`?"
+        end
       end
     end
   end
