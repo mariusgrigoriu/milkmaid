@@ -3,6 +3,7 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'main'
+require 'paint'
 require 'rtm'
 
 def rtm
@@ -18,10 +19,17 @@ Main {
     def run
       begin
         rtm.incomplete_tasks do |taskseries|
-          print "#{taskseries['name']}"
-          print "(R)" unless taskseries['rrule'].nil?
-          print " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
-          "%A %b %d, %Y %I:%M %p")}\n"
+          text = "#{taskseries['name']}"
+          text << "(R)" unless taskseries['rrule'].nil?
+          text << " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
+          "%A %b %d, %Y %I:%M %p")}"
+          color = {
+            '1'=>[234, 82, 0], 
+            '2'=>[0, 96, 191], 
+            '3'=>[53, 154, 255], 
+            'N'=>:nothing
+          }
+          puts Paint[text, color[taskseries['task']['priority']]]
         end
       rescue RTM::NoTokenException
         puts "Authentication token not found. Run `#{__FILE__} auth start`"
