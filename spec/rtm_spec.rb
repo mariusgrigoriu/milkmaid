@@ -8,6 +8,7 @@ describe "RTM" do
   before do
     RTM::RTM.stub(:new) { rtm_double }
     rtm_double.stub(:auth) { auth_double }
+    YAML.stub(:load_file).and_return({})
   end
 
   context "when config dotfile exists" do
@@ -24,32 +25,47 @@ describe "RTM" do
 
   context "when config dotfile does not exist" do
     it "does not crash" do
+      YAML.stub(:load_file).and_raise(Errno::ENOENT)
       lib
     end
   end
 
-  it "returns all incomplete tasks in order of priority then due date" do
-    a = {"name"=>"a", "task"=>{"completed"=>"", "priority"=>"1", "due"=>""}}
-    b = {"name"=>"b", "task"=>{"completed"=>"", "priority"=>"1",
-                                    "due"=>"2011-10-02T02:52:58Z"}}
-    c = {"name"=>"c", "task"=>{"completed"=>"", "priority"=>"N",
-                                    "due"=>"2012-10-02T02:52:58Z"}}
-    d = {"name"=>"d", "task"=>{"completed"=>"", "priority"=>"N",
-                                    "due"=>"2011-10-02T02:52:58Z"}}
-    RTM::RTM.stub_chain(:new, :tasks, :get_list) { 
-      {"tasks"=>{"list"=>[{"id"=>"21242147", "taskseries"=>[
-        a, b, c, d,
-        {"name"=>"done task", "task"=>{"completed"=>"2011-10-02T02:52:58Z"}}
-      ]}, 
-      {"id"=>"21242148"}, 
-      {"id"=>"21242149"}, 
-      {"id"=>"21242150"}, 
-      {"id"=>"21242151"}, 
-      {"id"=>"21242152"}], 
-      "rev"=>"4k555btb3vcwscc8g44sog8kw4ccccc"}, 
-      "stat"=>"ok"}
-    }
-    lib.incomplete_tasks.should == [b, a, d, c]
+  describe "listing tasks" do
+    let(:a) {{"name"=>"a", "task"=>{"completed"=>"", "priority"=>"1", "due"=>""}}}
+    let(:b) {{"name"=>"b", "task"=>{"completed"=>"", "priority"=>"1",
+                                      "due"=>"2011-10-02T02:52:58Z"}}}
+    let(:c) {{"name"=>"c", "task"=>{"completed"=>"", "priority"=>"N",
+                                      "due"=>"2012-10-02T02:52:58Z"}}}
+    let(:d) {{"name"=>"d", "task"=>{"completed"=>"", "priority"=>"N",
+                                      "due"=>"2011-10-02T02:52:58Z"}}}
+    before do
+      RTM::RTM.stub_chain(:new, :tasks, :get_list) { 
+        {"tasks"=>{"list"=>[{"id"=>"21242147", "taskseries"=>[
+          a, b, c, d,
+          {"name"=>"done task", "task"=>{"completed"=>"2011-10-02T02:52:58Z"}}
+        ]}, 
+        {"id"=>"21242148"}, 
+        {"id"=>"21242149"}, 
+        {"id"=>"21242150"}, 
+        {"id"=>"21242151"}, 
+        {"id"=>"21242152"}], 
+        "rev"=>"4k555btb3vcwscc8g44sog8kw4ccccc"}, 
+        "stat"=>"ok"}
+      }
+    end
+
+    it "returns all incomplete tasks in order of priority then due date" do
+      lib.incomplete_tasks.should == [b, a, d, c]
+    end
+
+    it "assigns and stores a local ID number to each task for easy addressing" do
+      pending
+      should_store_in_configuration({
+        :frob=>'testfrob',
+        :token=>'testtoken'
+      })
+      lib.incomplete_tasks
+    end
   end
 
   describe "authentication" do
@@ -70,7 +86,7 @@ describe "RTM" do
         end
 
         it "stores the frob in configuration" do
-          test_stores_in_configuration({:frob=>"testfrob"})
+          should_store_in_configuration({:frob=>"testfrob"})
           lib.auth_start
         end
       end
@@ -78,7 +94,7 @@ describe "RTM" do
       describe "completion" do
         it "stores the auth token in the dotfile" do
           auth_double.stub(:get_token) {'testtoken'}
-          test_stores_in_configuration({
+          should_store_in_configuration({
                                       :frob=>'testfrob',
                                       :token=>'testtoken'})
           lib.auth_finish
@@ -88,7 +104,7 @@ describe "RTM" do
   end
 end
 
-def test_stores_in_configuration(config)
+def should_store_in_configuration(config)
   io_double = double('io')
   File.should_receive(:open).and_yield(io_double)
   YAML.should_receive(:dump).with(config, io_double)
