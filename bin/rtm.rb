@@ -19,7 +19,7 @@ Main {
       begin
         rtm.incomplete_tasks do |taskseries|
           print "#{taskseries['name']}"
-          print "(R)" unless taskseries['rrule'].empty?
+          print "(R)" unless taskseries['rrule'].nil?
           print " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
           "%A %b %d, %Y %I:%M %p")}\n"
         end
