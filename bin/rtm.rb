@@ -54,7 +54,7 @@ Main {
           rtm.auth_finish
           puts 'Authentication token saved.'
         rescue RTM::VerificationException
-          puts 'Invalid frob. Did you visit the link from `rtm auth start`?'
+          puts "Invalid frob. Did you visit the link from `#{__FILE__} auth start`?"
         rescue RuntimeError
           puts "Frob does not exist. Did you run `#{__FILE__} auth start`?"
         end
