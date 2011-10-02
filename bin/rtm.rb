@@ -16,7 +16,16 @@ Main {
 
   mode :list do
     def run
-      
+      begin
+        rtm.incomplete_tasks do |taskseries|
+          print "#{taskseries['name']}"
+          print "(R)" unless taskseries['rrule'].empty?
+          print " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
+          "%A %b %d, %Y %I:%M %p")}\n"
+        end
+      rescue RTM::NoTokenException
+        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+      end
     end
   end
 
