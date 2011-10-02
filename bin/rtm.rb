@@ -59,7 +59,7 @@ Main {
     mode :start do
       def run
         puts '1. Visit the URL to authorize the application to access your account.'
-        puts '2. Run `rtm auth finish`'
+        puts "2. Run `#{__FILE__} auth finish`"
         puts
         puts rtm.auth_start
       end
