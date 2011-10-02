@@ -38,6 +38,23 @@ Main {
     end
   end
 
+  mode :complete do
+    argument(:tasknum) {
+      cast :int
+    }
+
+    def run
+      begin
+        rtm.complete_task params['tasknum'].value
+      rescue RTM_CLI::TaskNotFound
+        puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
+          "to load a list of tasks."
+      rescue RTM::NoTokenException
+        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+      end
+    end
+  end
+
   mode :auth do
     mode :start do
       def run

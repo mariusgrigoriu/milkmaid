@@ -71,6 +71,14 @@ describe "RTM" do
     end
   end
 
+  describe "completing tasks" do
+    it "raises an error when unable to find the desired task in config" do
+      lambda { lib.complete_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
+    end
+
+    it "marks the task as complete"
+  end
+
   describe "authentication" do
     before do
       auth_double.stub(:url) { 'http://testurl' }

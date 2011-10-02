@@ -49,6 +49,10 @@ class RTM_CLI
     entries
   end
 
+  def complete_task(tasknum)
+    raise TaskNotFound
+  end
+
   def auth_start
     url = @auth.url
     @config[:frob] = @auth.frob
@@ -59,6 +63,9 @@ class RTM_CLI
   def auth_finish
     @config[:token] = @auth.get_token
     save_config
+  end
+
+  class TaskNotFound < StandardError
   end
 
   private
