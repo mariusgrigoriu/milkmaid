@@ -28,7 +28,7 @@ describe "RTM" do
     end
   end
 
-  it "yields all incomplete tasks in order of priority then due date" do
+  it "returns all incomplete tasks in order of priority then due date" do
     a = {"name"=>"a", "task"=>{"completed"=>"", "priority"=>"1", "due"=>""}}
     b = {"name"=>"b", "task"=>{"completed"=>"", "priority"=>"1",
                                     "due"=>"2011-10-02T02:52:58Z"}}
