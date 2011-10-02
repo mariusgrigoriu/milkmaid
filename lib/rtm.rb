@@ -9,6 +9,7 @@ class RTM_CLI
       @auth = @rtm.auth
       @auth.frob = @config[:frob]
       @rtm.token = @config[:token]
+      @timeline = @rtm.timelines.create['timeline']
     rescue Errno::ENOENT
       @config = {}
     end
@@ -50,7 +51,13 @@ class RTM_CLI
   end
 
   def complete_task(tasknum)
-    raise TaskNotFound
+    raise TaskNotFound if @config["#{tasknum}list_id"].nil? || 
+                          @config["#{tasknum}taskseries_id"].nil? ||
+                          @config["#{tasknum}task_id"].nil?
+    @rtm.tasks.complete :list_id=>@config["#{tasknum}list_id"],
+                        :taskseries_id=>@config["#{tasknum}taskseries_id"],
+                        :task_id=>@config["#{tasknum}task_id"],
+                        :timeline=>@timeline
   end
 
   def auth_start

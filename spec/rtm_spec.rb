@@ -4,12 +4,14 @@ describe "RTM" do
   let(:lib) { RTM_CLI.new }
   let(:auth_double) { double('auth').as_null_object }
   let(:rtm_double) { double('RTM::RTM').as_null_object }
+  let(:timeline_double) { double('timeline').as_null_object }
 
   before do
     RTM::RTM.stub(:new) { rtm_double }
     rtm_double.stub(:auth) { auth_double }
     YAML.stub(:load_file).and_return({})
     File.stub(:open)
+    rtm_double.stub_chain(:timelines, :create) { timeline_double }
   end
 
   context "when config dotfile exists" do
@@ -76,7 +78,19 @@ describe "RTM" do
       lambda { lib.complete_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
     end
 
-    it "marks the task as complete"
+    it "marks the task as complete" do
+      YAML.stub(:load_file) {{
+        '1list_id'=>'1l',
+        '1taskseries_id'=>'1ts',
+        '1task_id'=>'1t'
+      }}
+      tasks_double = double('tasks')
+      rtm_double.stub(:tasks) { tasks_double }
+      tasks_double.should_receive(:complete).with(
+        :list_id=>'1l', :taskseries_id=>'1ts', :task_id=>'1t', 
+        :timeline=>timeline_double)
+      lib.complete_task 1
+    end
   end
 
   describe "authentication" do
