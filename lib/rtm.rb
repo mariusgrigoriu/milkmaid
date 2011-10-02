@@ -16,13 +16,17 @@ class RTM_CLI
 
   def incomplete_tasks
     entries = []
+    list_id = nil
     @rtm.tasks.get_list['tasks']['list'].as_array.each do |items|
-      next if items['taskseries'].nil?
-      items['taskseries'].as_array.each do |taskseries|
-        entries << taskseries if taskseries['task']['completed'].empty?
+      list_id = items['id']
+      if !items['taskseries'].nil?
+        items['taskseries'].as_array.each do |taskseries|
+          taskseries['list_id'] = list_id
+          entries << taskseries if taskseries['task']['completed'].empty?
+        end
       end
     end
-    entries = entries.sort do |a, b|
+    entries.sort! do |a, b|
       result = a['task']['priority'] <=> b['task']['priority']
       if result == 0
         if a['task']['due'].empty?
@@ -36,6 +40,13 @@ class RTM_CLI
         result
       end
     end
+    entries.each_with_index do |taskseries, i|
+      @config["#{i+1}list_id"] = taskseries['list_id']
+      @config["#{i+1}taskseries_id"] = taskseries['id']
+      @config["#{i+1}task_id"] = taskseries['task']['id']
+    end
+    save_config
+    entries
   end
 
   def auth_start

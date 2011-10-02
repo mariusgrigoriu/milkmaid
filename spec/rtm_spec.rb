@@ -9,6 +9,7 @@ describe "RTM" do
     RTM::RTM.stub(:new) { rtm_double }
     rtm_double.stub(:auth) { auth_double }
     YAML.stub(:load_file).and_return({})
+    File.stub(:open)
   end
 
   context "when config dotfile exists" do
@@ -31,13 +32,14 @@ describe "RTM" do
   end
 
   describe "listing tasks" do
-    let(:a) {{"name"=>"a", "task"=>{"completed"=>"", "priority"=>"1", "due"=>""}}}
-    let(:b) {{"name"=>"b", "task"=>{"completed"=>"", "priority"=>"1",
-                                      "due"=>"2011-10-02T02:52:58Z"}}}
-    let(:c) {{"name"=>"c", "task"=>{"completed"=>"", "priority"=>"N",
-                                      "due"=>"2012-10-02T02:52:58Z"}}}
-    let(:d) {{"name"=>"d", "task"=>{"completed"=>"", "priority"=>"N",
-                                      "due"=>"2011-10-02T02:52:58Z"}}}
+    let(:a) {{"name"=>"a", "id"=>"ats", "task"=>{"completed"=>"", "priority"=>"1", 
+                                      "id"=>"at", "due"=>""}}}
+    let(:b) {{"name"=>"b", "id"=>"bts", "task"=>{"completed"=>"", "priority"=>"1",
+                                      "id"=>"bt", "due"=>"2011-10-02T02:52:58Z"}}}
+    let(:c) {{"name"=>"c", "id"=>"cts", "task"=>{"completed"=>"", "priority"=>"N",
+                                      "id"=>"ct", "due"=>"2012-10-02T02:52:58Z"}}}
+    let(:d) {{"name"=>"d", "id"=>"dts", "task"=>{"completed"=>"", "priority"=>"N",
+                                      "id"=>"dt", "due"=>"2011-10-02T02:52:58Z"}}}
     before do
       RTM::RTM.stub_chain(:new, :tasks, :get_list) { 
         {"tasks"=>{"list"=>[{"id"=>"21242147", "taskseries"=>[
@@ -59,10 +61,11 @@ describe "RTM" do
     end
 
     it "assigns and stores a local ID number to each task for easy addressing" do
-      pending
       should_store_in_configuration({
-        :frob=>'testfrob',
-        :token=>'testtoken'
+        '1list_id'=>'21242147', '1taskseries_id'=>'bts', '1task_id'=>'bt',
+        '2list_id'=>'21242147', '2taskseries_id'=>'ats', '2task_id'=>'at',
+        '3list_id'=>'21242147', '3taskseries_id'=>'dts', '3task_id'=>'dt',
+        '4list_id'=>'21242147', '4taskseries_id'=>'cts', '4task_id'=>'ct'
       })
       lib.incomplete_tasks
     end
