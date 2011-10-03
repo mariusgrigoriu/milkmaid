@@ -1,6 +1,44 @@
 = Milkmaid
 
-Description goes here.
+Milkmaid is a command-line client for Remember the Milk.
+
+==Features
+* View a list of incomplete tasks, and their due dates
+* Complete a task
+* Postpone a task
+* Add a new task, setting properties using the Smart Add feature
+
+== Installing
+
+$ gem install milkmaid
+
+== Authorizing
+
+Before you can connect to your tasks you must authorize the client.
+
+1. $ milkmaid auth start
+2. Follow the generated link
+3. $ milkmaid auth finish
+
+Now you are ready to work with your tasks.
+
+== Commands
+
+View a list of incomplete tasks and get task numbers. You will need a task
+number to do things to tasks like completing or postponing them. The task
+number appears at the beginning.
+$ milkmaid list
+
+Complete a task
+$ milkmaid complete <task number>
+
+Postpone a task
+$ milkmaid postpone <task number>
+
+Add a task (Use single quotes to contain the task name)
+Adding a task supports Remember the Milk's Smart Add feature. With it you
+can set properties such as the due date, priority, etc.
+$ milkmaid add '<task name>'
 
 == Contributing to Milkmaid
  
