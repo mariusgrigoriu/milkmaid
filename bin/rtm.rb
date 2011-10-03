@@ -23,7 +23,6 @@ Main {
           text << "(R)" unless taskseries['rrule'].nil?
           text << " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
           "%A %b %d, %Y %I:%M %p")}" unless taskseries['task']['due'].empty?
-          text << " ##{taskseries['id']}"
           color = {
             '1'=>[234, 82, 0], 
             '2'=>[0, 96, 191], 

@@ -93,7 +93,7 @@ describe "RTM" do
   end
 
   it "adds a task to the inbox using Smart Add" do
-    tasks_double.should_receive(:add).with(:name=>'TestName', 
+    tasks_double.should_receive(:add).with(:name=>'TestName', :parse=>'1',
                                            :timeline=>timeline_double)
     lib.add_task 'TestName'
   end

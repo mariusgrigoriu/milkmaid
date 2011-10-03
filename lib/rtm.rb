@@ -61,7 +61,7 @@ class RTM_CLI
   end
 
   def add_task(name)
-    @rtm.tasks.add :name=>name, :timeline=>@timeline
+    @rtm.tasks.add :name=>name, :parse=>'1', :timeline=>@timeline
   end
   
   def auth_start
