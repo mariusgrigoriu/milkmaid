@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe "RTM" do
-  let(:lib) { RTM_CLI.new }
+describe "Milkmaid" do
+  let(:lib) { Milkmaid.new }
   let(:auth_double) { double('auth').as_null_object }
-  let(:rtm_double) { double('RTM::RTM').as_null_object }
+  let(:rtm_double) { double('rtm').as_null_object }
   let(:timeline_double) { double('timeline').as_null_object }
   let(:tasks_double) { double('tasks') }
 
@@ -19,7 +19,7 @@ describe "RTM" do
   context "when config dotfile exists" do
     it "loads the configuration dotfile" do
       ENV['HOME'] = 'testhome'
-      YAML.should_receive(:load_file).with('testhome/.rtm') { 
+      YAML.should_receive(:load_file).with('testhome/.milkmaid') { 
         {:frob=>'testfrob',
          :token=>'testtoken'} }
       auth_double.should_receive(:frob=).with('testfrob')
@@ -77,8 +77,8 @@ describe "RTM" do
 
   describe "working with existing tasks" do
     it "raises an error when unable to find the desired task in config" do
-      lambda { lib.complete_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
-      lambda { lib.postpone_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
+      lambda { lib.complete_task 1 }.should raise_error(Milkmaid::TaskNotFound)
+      lambda { lib.postpone_task 1 }.should raise_error(Milkmaid::TaskNotFound)
     end
 
     it "marks the task as complete" do

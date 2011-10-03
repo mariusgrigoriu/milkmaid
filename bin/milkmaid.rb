@@ -4,10 +4,10 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'main'
 require 'paint'
-require 'rtm'
+require 'milkmaid'
 
-def rtm
-  @rtmcli ||= RTM_CLI.new
+def milkmaid
+  @milkmaid ||= Milkmaid.new
 end
 
 Main {
@@ -18,7 +18,7 @@ Main {
   mode :list do
     def run
       begin
-        rtm.incomplete_tasks.each_with_index do |taskseries, i|
+        milkmaid.incomplete_tasks.each_with_index do |taskseries, i|
           text = "#{i+1}: #{taskseries['name']}"
           text << "(R)" unless taskseries['rrule'].nil?
           text << " #{Time.parse(taskseries['task']['due']).getlocal.strftime(
@@ -52,8 +52,8 @@ Main {
 
     def run
       begin
-        rtm.complete_task params['tasknum'].value
-      rescue RTM_CLI::TaskNotFound
+        milkmaid.complete_task params['tasknum'].value
+      rescue Milkmaid::TaskNotFound
         puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
           "to load a list of tasks."
       rescue RTM::NoTokenException
@@ -69,8 +69,8 @@ Main {
 
     def run
       begin
-        rtm.postpone_task params['tasknum'].value
-      rescue RTM_CLI::TaskNotFound
+        milkmaid.postpone_task params['tasknum'].value
+      rescue Milkmaid::TaskNotFound
         puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
           "to load a list of tasks."
       rescue RTM::NoTokenException
@@ -84,7 +84,7 @@ Main {
 
     def run
       begin
-        rtm.add_task params['taskname'].value
+        milkmaid.add_task params['taskname'].value
       rescue RTM::NoTokenException
         puts "Authentication token not found. Run `#{__FILE__} auth start`"
       end
@@ -97,14 +97,14 @@ Main {
         puts '1. Visit the URL to authorize the application to access your account.'
         puts "2. Run `#{__FILE__} auth finish`"
         puts
-        puts rtm.auth_start
+        puts milkmaid.auth_start
       end
     end
 
     mode :finish do
       def run
         begin
-          rtm.auth_finish
+          milkmaid.auth_finish
           puts 'Authentication token saved.'
         rescue RTM::VerificationException
           puts "Invalid frob. Did you visit the link from `#{__FILE__} auth start`?"
