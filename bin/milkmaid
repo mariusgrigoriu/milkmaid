@@ -11,11 +11,20 @@ def milkmaid
 end
 
 Main {
+  description "Milkmaid command-line client for Remember the Milk\n" +
+    "If this is your first time running this, use the auth command to connect to your account."
+
   def run
     help!
   end
 
   mode :list do
+    description "Lists all inactive tasks. Tasks that repeat are marked with a (R).\n" +
+      "If there is a due date, it appears to the right of the task. Tasks are color\n" +
+      "coded by priority the same when viewed on the web. Tasks due today are in bold\n" +
+      "while tasks that are overdue are underlined.\n" +
+      "Use this command to assign a number to tasks so you may perform other actions."
+
     def run
       begin
         milkmaid.incomplete_tasks.each_with_index do |taskseries, i|
@@ -47,8 +56,11 @@ Main {
   end
 
   mode :complete do
+    description "Marks a task as complete."
+
     argument(:tasknum) {
       cast :int
+      description "The number of the task as printed by the list command."
     }
 
     def run
@@ -64,8 +76,11 @@ Main {
   end
 
   mode :postpone do
+    description "Extends the due date of a task."
+
     argument(:tasknum) {
       cast :int
+      description "The number of the task as printed by the list command."
     }
 
     def run
@@ -81,8 +96,11 @@ Main {
   end
 
   mode :delete do
+    description "Gets rid of a task."
+
     argument(:tasknum) {
       cast :int
+      description "The number of the task as printed by the list command."
     }
 
     def run
@@ -110,7 +128,12 @@ Main {
   end
         
   mode :auth do
+    description "Auth commands are used to connect Milkmaid to your account."
+
     mode :start do
+      description "Use this command to generate an authentication link.\n" +
+        "Follow the link before issuing the auth finish command."
+
       def run
         puts '1. Visit the URL to authorize the application to access your account.'
         puts "2. Run `#{__FILE__} auth finish`"
@@ -120,6 +143,8 @@ Main {
     end
 
     mode :finish do
+      description "Use this command to complete authentication to your account."
+
       def run
         begin
           milkmaid.auth_finish
