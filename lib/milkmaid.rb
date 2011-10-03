@@ -23,19 +23,21 @@ class Milkmaid
       if !items['taskseries'].nil?
         items['taskseries'].as_array.each do |taskseries|
           taskseries['list_id'] = list_id
-          entries << taskseries if taskseries['task']['completed'].empty?
+          entries << taskseries if taskseries['task'].as_array.last['completed'].empty?
         end
       end
     end
     entries.sort! do |a, b|
-      result = a['task']['priority'] <=> b['task']['priority']
+      taska = a['task'].as_array.last
+      taskb = b['task'].as_array.last
+      result = taska['priority'] <=> taskb['priority']
       if result == 0
-        if a['task']['due'].empty?
+        if taska['due'].empty?
           1
-        elsif b['task']['due'].empty?
+        elsif taskb['due'].empty?
           -1
         else
-          Time.parse(a['task']['due']) <=> Time.parse(b['task']['due'])
+          Time.parse(taska['due']) <=> Time.parse(taskb['due'])
         end
       else
         result
@@ -44,7 +46,7 @@ class Milkmaid
     entries.each_with_index do |taskseries, i|
       @config["#{i+1}list_id"] = taskseries['list_id']
       @config["#{i+1}taskseries_id"] = taskseries['id']
-      @config["#{i+1}task_id"] = taskseries['task']['id']
+      @config["#{i+1}task_id"] = taskseries['task'].as_array.last['id']
     end
     save_config
     entries

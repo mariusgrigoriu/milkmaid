@@ -38,8 +38,11 @@ describe "Milkmaid" do
   describe "listing tasks" do
     let(:a) {{"name"=>"a", "id"=>"ats", "task"=>{"completed"=>"", "priority"=>"1", 
                                       "id"=>"at", "due"=>""}}}
-    let(:b) {{"name"=>"b", "id"=>"bts", "task"=>{"completed"=>"", "priority"=>"1",
-                                      "id"=>"bt", "due"=>"2011-10-02T02:52:58Z"}}}
+    let(:b) {{"name"=>"b", "id"=>"bts", "task"=>[
+                                      {"completed"=>"2009-10-01", "priority"=>"1",
+                                      "id"=>"bt", "due"=>"2011-10-02T02:52:58Z"},
+                                      {"completed"=>"", "priority"=>"1",
+                                      "id"=>"bt", "due"=>"2011-10-02T02:52:58Z"}]}}
     let(:c) {{"name"=>"c", "id"=>"cts", "task"=>{"completed"=>"", "priority"=>"N",
                                       "id"=>"ct", "due"=>"2012-10-02T02:52:58Z"}}}
     let(:d) {{"name"=>"d", "id"=>"dts", "task"=>{"completed"=>"", "priority"=>"N",
