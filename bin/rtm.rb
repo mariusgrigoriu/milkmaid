@@ -29,7 +29,15 @@ Main {
             '3'=>[53, 154, 255], 
             'N'=>:nothing
           }
-          puts Paint[text, color[taskseries['task']['priority']]]
+          mode1 = mode2 = nil
+          case Date.today <=> Date.parse(taskseries['task']['due'])
+          when 0
+            mode1 = :bold
+          when 1
+            mode1 = :bold
+            mode2 = :underline
+          end unless taskseries['task']['due'].empty?
+          puts Paint[text, color[taskseries['task']['priority']], mode1, mode2]
         end
       rescue RTM::NoTokenException
         puts "Authentication token not found. Run `#{__FILE__} auth start`"
