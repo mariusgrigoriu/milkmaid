@@ -72,6 +72,18 @@ Main {
     end
   end
 
+  mode :add do
+    argument(:taskname) 
+
+    def run
+      begin
+        rtm.add_task params['taskname'].value
+      rescue RTM::NoTokenException
+        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+      end
+    end
+  end
+        
   mode :auth do
     mode :start do
       def run

@@ -5,6 +5,7 @@ describe "RTM" do
   let(:auth_double) { double('auth').as_null_object }
   let(:rtm_double) { double('RTM::RTM').as_null_object }
   let(:timeline_double) { double('timeline').as_null_object }
+  let(:tasks_double) { double('tasks') }
 
   before do
     RTM::RTM.stub(:new) { rtm_double }
@@ -12,6 +13,7 @@ describe "RTM" do
     YAML.stub(:load_file).and_return({})
     File.stub(:open)
     rtm_double.stub_chain(:timelines, :create) { timeline_double }
+    rtm_double.stub(:tasks) { tasks_double }
   end
 
   context "when config dotfile exists" do
@@ -73,7 +75,7 @@ describe "RTM" do
     end
   end
 
-  describe "working with tasks" do
+  describe "working with existing tasks" do
     it "raises an error when unable to find the desired task in config" do
       lambda { lib.complete_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
       lambda { lib.postpone_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
@@ -88,6 +90,12 @@ describe "RTM" do
       should_call_rtm_api(:postpone, 2)
       lib.postpone_task 2
     end
+  end
+
+  it "adds a task to the inbox using Smart Add" do
+    tasks_double.should_receive(:add).with(:name=>'TestName', 
+                                           :timeline=>timeline_double)
+    lib.add_task 'TestName'
   end
 
   describe "authentication" do
@@ -138,8 +146,6 @@ def should_call_rtm_api(method, tasknum)
     "#{tasknum}taskseries_id"=>"#{tasknum}ts",
     "#{tasknum}task_id"=>"#{tasknum}t"
   }}
-  tasks_double = double('tasks')
-  rtm_double.stub(:tasks) { tasks_double }
   tasks_double.should_receive(method).with(
     :list_id=>"#{tasknum}l", :taskseries_id=>"#{tasknum}ts", 
     :task_id=>"#{tasknum}t", :timeline=>timeline_double)

@@ -60,6 +60,10 @@ class RTM_CLI
     call_rtm_api :postpone, tasknum
   end
 
+  def add_task(name)
+    @rtm.tasks.add :name=>name, :timeline=>@timeline
+  end
+  
   def auth_start
     url = @auth.url
     @config[:frob] = @auth.frob
