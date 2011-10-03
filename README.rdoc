@@ -52,6 +52,22 @@ can set properties such as the due date, priority, etc.
 
 $ milkmaid add '<task name>'
 
+== Version history
+
+=== 0.2.0
+
+* New delete command
+* Friendlier usage information
+
+=== 0.1.1
+
+* Fixed an issue when listing tasks with recurrences that were completed
+
+=== 0.1.0
+
+* Initial version
+
+
 == Contributing to Milkmaid
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
