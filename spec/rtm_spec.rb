@@ -73,23 +73,20 @@ describe "RTM" do
     end
   end
 
-  describe "completing tasks" do
+  describe "working with tasks" do
     it "raises an error when unable to find the desired task in config" do
       lambda { lib.complete_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
+      lambda { lib.postpone_task 1 }.should raise_error(RTM_CLI::TaskNotFound)
     end
 
     it "marks the task as complete" do
-      YAML.stub(:load_file) {{
-        '1list_id'=>'1l',
-        '1taskseries_id'=>'1ts',
-        '1task_id'=>'1t'
-      }}
-      tasks_double = double('tasks')
-      rtm_double.stub(:tasks) { tasks_double }
-      tasks_double.should_receive(:complete).with(
-        :list_id=>'1l', :taskseries_id=>'1ts', :task_id=>'1t', 
-        :timeline=>timeline_double)
+      should_call_rtm_api(:complete, 1)
       lib.complete_task 1
+    end
+
+    it "postpones a task" do
+      should_call_rtm_api(:postpone, 2)
+      lib.postpone_task 2
     end
   end
 
@@ -133,4 +130,17 @@ def should_store_in_configuration(config)
   io_double = double('io')
   File.should_receive(:open).and_yield(io_double)
   YAML.should_receive(:dump).with(config, io_double)
+end
+
+def should_call_rtm_api(method, tasknum)
+  YAML.stub(:load_file) {{
+    "#{tasknum}list_id"=>"#{tasknum}l",
+    "#{tasknum}taskseries_id"=>"#{tasknum}ts",
+    "#{tasknum}task_id"=>"#{tasknum}t"
+  }}
+  tasks_double = double('tasks')
+  rtm_double.stub(:tasks) { tasks_double }
+  tasks_double.should_receive(method).with(
+    :list_id=>"#{tasknum}l", :taskseries_id=>"#{tasknum}ts", 
+    :task_id=>"#{tasknum}t", :timeline=>timeline_double)
 end

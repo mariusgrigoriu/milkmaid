@@ -51,13 +51,13 @@ class RTM_CLI
   end
 
   def complete_task(tasknum)
-    raise TaskNotFound if @config["#{tasknum}list_id"].nil? || 
-                          @config["#{tasknum}taskseries_id"].nil? ||
-                          @config["#{tasknum}task_id"].nil?
-    @rtm.tasks.complete :list_id=>@config["#{tasknum}list_id"],
-                        :taskseries_id=>@config["#{tasknum}taskseries_id"],
-                        :task_id=>@config["#{tasknum}task_id"],
-                        :timeline=>@timeline
+    check_task_ids tasknum
+    call_rtm_api :complete, tasknum
+  end
+
+  def postpone_task(tasknum)
+    check_task_ids tasknum
+    call_rtm_api :postpone, tasknum
   end
 
   def auth_start
@@ -78,5 +78,18 @@ class RTM_CLI
   private
   def save_config
     File.open(@config_file, 'w') { |f| YAML.dump(@config, f) }
+  end
+
+  def check_task_ids(tasknum)
+    raise TaskNotFound if @config["#{tasknum}list_id"].nil? || 
+                          @config["#{tasknum}taskseries_id"].nil? ||
+                          @config["#{tasknum}task_id"].nil?
+  end
+
+  def call_rtm_api(method, tasknum)
+    @rtm.tasks.send method, :list_id=>@config["#{tasknum}list_id"],
+                        :taskseries_id=>@config["#{tasknum}taskseries_id"],
+                        :task_id=>@config["#{tasknum}task_id"],
+                        :timeline=>@timeline
   end
 end
