@@ -1,3 +1,4 @@
+
 = Milkmaid
 
 Milkmaid is a command-line client for Remember the Milk.
@@ -53,6 +54,11 @@ can set properties such as the due date, priority, etc.
 $ milkmaid add '<task name>'
 
 == Version history
+
+=== 0.2.1
+
+* Fixed auth scenarios
+
 
 === 0.2.0
 
