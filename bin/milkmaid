@@ -19,10 +19,11 @@ Main {
     def run
       begin
         milkmaid.incomplete_tasks.each_with_index do |taskseries, i|
+          task = Milkmaid::last_task taskseries
           text = "#{i+1}: #{taskseries['name']}"
           text << "(R)" unless taskseries['rrule'].nil?
-          text << " #{Time.parse(taskseries['task'].as_array.last['due']).getlocal.strftime(
-          "%A %b %d, %Y %I:%M %p")}" unless taskseries['task'].as_array.last['due'].empty?
+          text << " #{Time.parse(Milkmaid::last_task(taskseries)['due']).getlocal.strftime(
+          "%A %b %d, %Y %I:%M %p")}" unless task['due'].empty?
           color = {
             '1'=>[234, 82, 0], 
             '2'=>[0, 96, 191], 
@@ -30,14 +31,14 @@ Main {
             'N'=>:nothing
           }
           mode1 = mode2 = nil
-          case Date.today <=> Date.parse(taskseries['task'].as_array.last['due'])
+          case Date.today <=> Date.parse(task['due'])
           when 0
             mode1 = :bold
           when 1
             mode1 = :bold
             mode2 = :underline
-          end unless taskseries['task'].as_array.last['due'].empty?
-          puts Paint[text, color[taskseries['task'].as_array.last['priority']], mode1, mode2]
+          end unless task['due'].empty?
+          puts Paint[text, color[task['priority']], mode1, mode2]
         end
       rescue RTM::NoTokenException
         puts "Authentication token not found. Run `#{__FILE__} auth start`"

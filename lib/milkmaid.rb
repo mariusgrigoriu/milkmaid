@@ -23,13 +23,13 @@ class Milkmaid
       if !items['taskseries'].nil?
         items['taskseries'].as_array.each do |taskseries|
           taskseries['list_id'] = list_id
-          entries << taskseries if taskseries['task'].as_array.last['completed'].empty?
+          entries << taskseries if Milkmaid::last_task(taskseries)['completed'].empty?
         end
       end
     end
     entries.sort! do |a, b|
-      taska = a['task'].as_array.last
-      taskb = b['task'].as_array.last
+      taska = Milkmaid::last_task a
+      taskb = Milkmaid::last_task b
       result = taska['priority'] <=> taskb['priority']
       if result == 0
         if taska['due'].empty?
@@ -46,7 +46,7 @@ class Milkmaid
     entries.each_with_index do |taskseries, i|
       @config["#{i+1}list_id"] = taskseries['list_id']
       @config["#{i+1}taskseries_id"] = taskseries['id']
-      @config["#{i+1}task_id"] = taskseries['task'].as_array.last['id']
+      @config["#{i+1}task_id"] = Milkmaid::last_task(taskseries)['id']
     end
     save_config
     entries
@@ -79,6 +79,10 @@ class Milkmaid
   end
 
   class TaskNotFound < StandardError
+  end
+
+  def self.last_task(taskseries)
+    taskseries['task'].as_array.last
   end
 
   private
