@@ -10,7 +10,7 @@ describe "Milkmaid" do
   before do
     RTM::RTM.stub(:new) { rtm_double }
     rtm_double.stub(:auth) { auth_double }
-    YAML.stub(:load_file).and_return({})
+    YAML.stub(:load_file).and_return({:token=>'tsttoken'})
     File.stub(:open)
     rtm_double.stub_chain(:timelines, :create) { timeline_double }
     rtm_double.stub(:tasks) { tasks_double }
@@ -24,6 +24,12 @@ describe "Milkmaid" do
          :token=>'testtoken'} }
       auth_double.should_receive(:frob=).with('testfrob')
       rtm_double.should_receive(:token=).with('testtoken')
+      lib
+    end
+
+    it "does not attempt to create a timeline when no auth token exists" do
+      YAML.stub(:load_file).and_return({})
+      rtm_double.should_not_receive(:timelines)
       lib
     end
   end
@@ -69,6 +75,7 @@ describe "Milkmaid" do
 
     it "assigns and stores a local ID number to each task for easy addressing" do
       should_store_in_configuration({
+        :token=>'tsttoken',
         '1list_id'=>'21242147', '1taskseries_id'=>'bts', '1task_id'=>'bt',
         '2list_id'=>'21242147', '2taskseries_id'=>'ats', '2task_id'=>'at',
         '3list_id'=>'21242147', '3taskseries_id'=>'dts', '3task_id'=>'dt',
@@ -114,30 +121,30 @@ describe "Milkmaid" do
       File.stub(:open)
     end
 
-    context "when frob exists in config" do
+
+    describe "setup" do
       before do
+        YAML.stub(:load_file).and_raise(Errno::ENOENT)
+      end
+
+      it "directs the user to setup auth" do
+        lib.auth_start.should == 'http://testurl'
+      end
+
+      it "stores the frob in configuration" do
+        should_store_in_configuration({:frob=>"testfrob"})
+        lib.auth_start
+      end
+    end
+
+    describe "completion" do
+      it "stores the auth token in the dotfile" do
         YAML.stub(:load_file) { {:frob=>'testfrob'} }
-      end
-
-      describe "setup" do
-        it "directs the user to setup auth" do
-          lib.auth_start.should == 'http://testurl'
-        end
-
-        it "stores the frob in configuration" do
-          should_store_in_configuration({:frob=>"testfrob"})
-          lib.auth_start
-        end
-      end
-
-      describe "completion" do
-        it "stores the auth token in the dotfile" do
-          auth_double.stub(:get_token) {'testtoken'}
-          should_store_in_configuration({
-                                      :frob=>'testfrob',
-                                      :token=>'testtoken'})
-          lib.auth_finish
-        end
+        auth_double.stub(:get_token) {'testtoken'}
+        should_store_in_configuration({
+                                    :frob=>'testfrob',
+                                    :token=>'testtoken'})
+        lib.auth_finish
       end
     end
   end
@@ -151,6 +158,7 @@ end
 
 def should_call_rtm_api(method, tasknum)
   YAML.stub(:load_file) {{
+    :token=>'tsttoken',
     "#{tasknum}list_id"=>"#{tasknum}l",
     "#{tasknum}taskseries_id"=>"#{tasknum}ts",
     "#{tasknum}task_id"=>"#{tasknum}t"

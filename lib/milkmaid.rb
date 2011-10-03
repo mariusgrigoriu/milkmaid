@@ -3,13 +3,13 @@ require 'moocow'
 class Milkmaid
   def initialize
     @rtm = RTM::RTM.new(RTM::Endpoint.new('31308536ffed80061df846c3a4564a27', 'c1476318e3483441'))
+    @auth = @rtm.auth
     begin
       @config_file = File.join(ENV['HOME'], '.milkmaid')
       @config = YAML.load_file(@config_file)
-      @auth = @rtm.auth
       @auth.frob = @config[:frob]
       @rtm.token = @config[:token]
-      @timeline = @rtm.timelines.create['timeline']
+      @timeline = @rtm.timelines.create['timeline'] unless @config[:token].nil?
     rescue Errno::ENOENT
       @config = {}
     end
