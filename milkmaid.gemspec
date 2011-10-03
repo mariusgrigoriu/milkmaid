@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "milkmaid"
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marius Grigoriu"]
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "bin/milkmaid",
     "lib/milkmaid.rb",
+    "milkmaid.gemspec",
     "spec/milkmaid_spec.rb",
     "spec/spec_helper.rb"
   ]
