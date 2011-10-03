@@ -62,6 +62,11 @@ class Milkmaid
     call_rtm_api :postpone, tasknum
   end
 
+  def delete_task(tasknum)
+    check_task_ids tasknum
+    call_rtm_api :delete, tasknum
+  end
+
   def add_task(name)
     @rtm.tasks.add :name=>name, :parse=>'1', :timeline=>@timeline
   end

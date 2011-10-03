@@ -30,6 +30,7 @@ number appears at the beginning.
 
 $ milkmaid list
 
+
 Complete a task
 
 $ milkmaid complete <task number>
@@ -38,6 +39,11 @@ $ milkmaid complete <task number>
 Postpone a task
 
 $ milkmaid postpone <task number>
+
+
+Delete a task
+
+$ milkmaid delete <task number>
 
 Add a task (Use single quotes to contain the task name)
 

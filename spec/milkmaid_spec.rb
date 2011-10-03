@@ -81,7 +81,8 @@ describe "Milkmaid" do
   describe "working with existing tasks" do
     it "raises an error when unable to find the desired task in config" do
       lambda { lib.complete_task 1 }.should raise_error(Milkmaid::TaskNotFound)
-      lambda { lib.postpone_task 1 }.should raise_error(Milkmaid::TaskNotFound)
+      lambda { lib.postpone_task 2 }.should raise_error(Milkmaid::TaskNotFound)
+      lambda { lib.delete_task 3 }.should raise_error(Milkmaid::TaskNotFound)
     end
 
     it "marks the task as complete" do
@@ -92,6 +93,11 @@ describe "Milkmaid" do
     it "postpones a task" do
       should_call_rtm_api(:postpone, 2)
       lib.postpone_task 2
+    end
+
+    it "deletes a task" do
+      should_call_rtm_api(:delete, 3)
+      lib.delete_task 3
     end
   end
 
