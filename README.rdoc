@@ -1,4 +1,3 @@
-
 = Milkmaid
 
 Milkmaid is a command-line client for Remember the Milk.
@@ -73,6 +72,9 @@ $ milkmaid add '<task name>'
 
 * Initial version
 
+== Contact me
+
+Follow me on twitter: @mariusgrigoriu
 
 == Contributing to Milkmaid
  
