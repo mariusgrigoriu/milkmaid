@@ -15,6 +15,10 @@ class Milkmaid
     end
   end
 
+  def lists
+    @rtm.lists.get_list['lists']['list'].as_array
+  end
+  
   def incomplete_tasks
     entries = []
     list_id = nil

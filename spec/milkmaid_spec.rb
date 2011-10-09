@@ -41,6 +41,14 @@ describe "Milkmaid" do
     end
   end
 
+  it 'returns all lists' do
+    a = {"id"=>"21242147", "name"=>"Inbox", "deleted"=>"0", "locked"=>"1", "archived"=>"0", "position"=>"-1", "smart"=>"0", "sort_order"=>"0"}
+    rtm_double.stub_chain(:lists, :get_list) do
+      {"stat"=>"ok", "lists"=>{"list"=>a}}
+    end
+    lib.lists.should == [a]
+  end
+    
   describe "listing tasks" do
     let(:a) {{"name"=>"a", "id"=>"ats", "task"=>{"completed"=>"", "priority"=>"1", 
                                       "id"=>"at", "due"=>""}}}

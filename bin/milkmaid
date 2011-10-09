@@ -31,6 +31,16 @@ Main {
     help!
   end
 
+  mode :list do
+    description "Display the available lists."
+
+    def run
+      handle_exceptions do
+        milkmaid.lists.each { |l| puts l['name'] }
+      end
+    end
+  end
+
   mode :task do
     description "Lists inactive tasks. Tasks that repeat are marked with a (R).\n" +
       "If there is a due date, it appears to the right of the task. Tasks are color\n" +
