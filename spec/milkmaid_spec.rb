@@ -93,10 +93,12 @@ describe "Milkmaid" do
     it "assigns and stores a local ID number to each task for easy addressing" do
       should_store_in_configuration({
         :token=>'tsttoken',
-        '1list_id'=>'21242147', '1taskseries_id'=>'bts', '1task_id'=>'bt',
-        '2list_id'=>'21242147', '2taskseries_id'=>'ats', '2task_id'=>'at',
-        '3list_id'=>'21242147', '3taskseries_id'=>'dts', '3task_id'=>'dt',
-        '4list_id'=>'21242147', '4taskseries_id'=>'cts', '4task_id'=>'ct'
+        :tasks=>[
+          {:list_id=>'21242147', :taskseries_id=>'bts', :task_id=>'bt'},
+          {:list_id=>'21242147', :taskseries_id=>'ats', :task_id=>'at'},
+          {:list_id=>'21242147', :taskseries_id=>'dts', :task_id=>'dt'},
+          {:list_id=>'21242147', :taskseries_id=>'cts', :task_id=>'ct'}
+        ]
       })
       lib.incomplete_tasks
     end
@@ -176,9 +178,9 @@ end
 def should_call_rtm_api(method, tasknum)
   YAML.stub(:load_file) {{
     :token=>'tsttoken',
-    "#{tasknum}list_id"=>"#{tasknum}l",
-    "#{tasknum}taskseries_id"=>"#{tasknum}ts",
-    "#{tasknum}task_id"=>"#{tasknum}t"
+    :tasks=>(0...tasknum).collect do |n| 
+      {:list_id=>"#{n+1}l", :taskseries_id=>"#{n+1}ts", :task_id=>"#{n+1}t"}
+    end
   }}
   tasks_double.should_receive(method).with(
     :list_id=>"#{tasknum}l", :taskseries_id=>"#{tasknum}ts", 

@@ -51,10 +51,10 @@ class Milkmaid
         result
       end
     end
-    entries.each_with_index do |taskseries, i|
-      @config["#{i+1}list_id"] = taskseries['list_id']
-      @config["#{i+1}taskseries_id"] = taskseries['id']
-      @config["#{i+1}task_id"] = Milkmaid::last_task(taskseries)['id']
+    @config[:tasks] = entries.map do |taskseries|
+      {:list_id => taskseries['list_id'], 
+      :taskseries_id => taskseries['id'],
+      :task_id => Milkmaid::last_task(taskseries)['id']}
     end
     save_config
     entries
@@ -104,15 +104,10 @@ class Milkmaid
   end
 
   def check_task_ids(tasknum)
-    raise TaskNotFound if @config["#{tasknum}list_id"].nil? || 
-                          @config["#{tasknum}taskseries_id"].nil? ||
-                          @config["#{tasknum}task_id"].nil?
+    raise TaskNotFound if @config[:tasks].nil? || @config[:tasks][tasknum-1].nil? 
   end
 
   def call_rtm_api(method, tasknum)
-    @rtm.tasks.send method, :list_id=>@config["#{tasknum}list_id"],
-                        :taskseries_id=>@config["#{tasknum}taskseries_id"],
-                        :task_id=>@config["#{tasknum}task_id"],
-                        :timeline=>@timeline
+    @rtm.tasks.send method, @config[:tasks][tasknum-1].merge(:timeline=>@timeline)
   end
 end
