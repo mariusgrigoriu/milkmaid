@@ -54,10 +54,14 @@ $ milkmaid add '<task name>'
 
 == Version history
 
+=== 0.3.0
+
+* Updated command structure. See section above
+* Friendly message when unable to connect to server
+
 === 0.2.1
 
 * Fixed auth scenarios
-
 
 === 0.2.0
 

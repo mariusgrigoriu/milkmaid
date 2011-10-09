@@ -18,6 +18,8 @@ def handle_exceptions
   rescue Milkmaid::TaskNotFound
     puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
       "to load a list of tasks."
+  rescue Errno::ETIMEDOUT
+    puts "Unable to connect to the server. Please try again later."
   end
 end
 
