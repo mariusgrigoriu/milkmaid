@@ -31,7 +31,7 @@ Main {
     help!
   end
 
-  mode :tasks do
+  mode :task do
     description "Lists inactive tasks. Tasks that repeat are marked with a (R).\n" +
       "If there is a due date, it appears to the right of the task. Tasks are color\n" +
       "coded by priority the same when viewed on the web. Tasks due today are in bold\n" +
@@ -64,54 +64,55 @@ Main {
         end
       end
     end
-  end
+    
+    mode :complete do
+      description "Marks a task as complete."
 
-  mode :complete do
-    description "Marks a task as complete."
+      argument(:tasknum) {
+        cast :int
+        description "The number of the task as printed by the list command."
+      }
 
-    argument(:tasknum) {
-      cast :int
-      description "The number of the task as printed by the list command."
-    }
+      def run
+        handle_exceptions { milkmaid.complete_task params['tasknum'].value }
+      end
+    end
 
-    def run
-      handle_exceptions { milkmaid.complete_task params['tasknum'].value }
+    mode :postpone do
+      description "Extends the due date of a task."
+
+      argument(:tasknum) {
+        cast :int
+        description "The number of the task as printed by the list command."
+      }
+
+      def run
+        handle_exceptions { milkmaid.postpone_task params['tasknum'].value }
+      end
+    end
+
+    mode :delete do
+      description "Gets rid of a task."
+
+      argument(:tasknum) {
+        cast :int
+        description "The number of the task as printed by the list command."
+      }
+
+      def run
+        handle_exceptions { milkmaid.delete_task params['tasknum'].value }
+      end
+    end
+
+    mode :add do
+      argument(:taskname) 
+
+      def run
+        handle_exceptions { milkmaid.add_task params['taskname'].value }
+      end
     end
   end
 
-  mode :postpone do
-    description "Extends the due date of a task."
-
-    argument(:tasknum) {
-      cast :int
-      description "The number of the task as printed by the list command."
-    }
-
-    def run
-      handle_exceptions { milkmaid.postpone_task params['tasknum'].value }
-    end
-  end
-#TODO: Move commands that work with tasks under task. Rename tasks to task
-  mode :delete do
-    description "Gets rid of a task."
-
-    argument(:tasknum) {
-      cast :int
-      description "The number of the task as printed by the list command."
-    }
-
-    def run
-      handle_exceptions { milkmaid.delete_task params['tasknum'].value }
-    end
-  end
-
-  mode :add do
-    argument(:taskname) 
-
-    def run
-      handle_exceptions { milkmaid.add_task params['taskname'].value }
-    end
-  end
         
   mode :auth do
     description "Auth commands are used to connect Milkmaid to your account."

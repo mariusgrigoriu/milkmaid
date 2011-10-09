@@ -28,29 +28,29 @@ View a list of incomplete tasks and get task numbers. You will need a task
 number to do things to tasks like completing or postponing them. The task
 number appears at the beginning.
 
-$ milkmaid list
+$ milkmaid task
 
 
 Complete a task
 
-$ milkmaid complete <task number>
+$ milkmaid task complete <task number>
 
 
 Postpone a task
 
-$ milkmaid postpone <task number>
+$ milkmaid task postpone <task number>
 
 
 Delete a task
 
-$ milkmaid delete <task number>
+$ milkmaid task delete <task number>
 
 Add a task (Use single quotes to contain the task name)
 
 Adding a task supports Remember the Milk's Smart Add feature. With it you
 can set properties such as the due date, priority, etc.
 
-$ milkmaid add '<task name>'
+$ milkmaid task add '<task name>'
 
 == Version history
 
