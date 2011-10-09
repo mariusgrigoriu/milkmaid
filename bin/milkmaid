@@ -10,8 +10,15 @@ def milkmaid
   @milkmaid ||= Milkmaid.new
 end
 
-def no_token_exception_message
-  puts "Authentication token not found. Run `#{__FILE__} auth start`"
+def handle_exceptions
+  begin
+    yield
+  rescue RTM::NoTokenException
+    puts "Authentication token not found. Run `#{__FILE__} auth start`"
+  rescue Milkmaid::TaskNotFound
+    puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
+      "to load a list of tasks."
+  end
 end
 
 Main {
@@ -30,7 +37,7 @@ Main {
       "Use this command to assign a number to tasks so you may perform other actions."
 
     def run
-      begin
+      handle_exceptions do
         milkmaid.incomplete_tasks.each_with_index do |taskseries, i|
           task = Milkmaid::last_task taskseries
           text = "#{i+1}: #{taskseries['name']}"
@@ -53,8 +60,6 @@ Main {
           end unless task['due'].empty?
           puts Paint[text, color[task['priority']], mode1, mode2]
         end
-      rescue RTM::NoTokenException
-        no_token_exception_message
       end
     end
   end
@@ -68,14 +73,7 @@ Main {
     }
 
     def run
-      begin
-        milkmaid.complete_task params['tasknum'].value
-      rescue Milkmaid::TaskNotFound
-        puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
-          "to load a list of tasks."
-      rescue RTM::NoTokenException
-        no_token_exception_message
-      end
+      handle_exceptions { milkmaid.complete_task params['tasknum'].value }
     end
   end
 
@@ -88,17 +86,10 @@ Main {
     }
 
     def run
-      begin
-        milkmaid.postpone_task params['tasknum'].value
-      rescue Milkmaid::TaskNotFound
-        puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
-          "to load a list of tasks."
-      rescue RTM::NoTokenException
-        no_token_exception_message
-      end
+      handle_exceptions { milkmaid.postpone_task params['tasknum'].value }
     end
   end
-
+#TODO: Move commands that work with tasks under task. Rename tasks to task
   mode :delete do
     description "Gets rid of a task."
 
@@ -108,14 +99,7 @@ Main {
     }
 
     def run
-      begin
-        milkmaid.delete_task params['tasknum'].value
-      rescue Milkmaid::TaskNotFound
-        puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
-          "to load a list of tasks."
-      rescue RTM::NoTokenException
-        no_token_exception_message
-      end
+      handle_exceptions { milkmaid.delete_task params['tasknum'].value }
     end
   end
 
@@ -123,11 +107,7 @@ Main {
     argument(:taskname) 
 
     def run
-      begin
-        milkmaid.add_task params['taskname'].value
-      rescue RTM::NoTokenException
-        no_token_exception_message
-      end
+      handle_exceptions { milkmaid.add_task params['taskname'].value }
     end
   end
         
