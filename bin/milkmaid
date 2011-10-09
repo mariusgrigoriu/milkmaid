@@ -10,6 +10,10 @@ def milkmaid
   @milkmaid ||= Milkmaid.new
 end
 
+def no_token_exception_message
+  puts "Authentication token not found. Run `#{__FILE__} auth start`"
+end
+
 Main {
   description "Milkmaid command-line client for Remember the Milk\n" +
     "If this is your first time running this, use the auth command to connect to your account."
@@ -50,7 +54,7 @@ Main {
           puts Paint[text, color[task['priority']], mode1, mode2]
         end
       rescue RTM::NoTokenException
-        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+        no_token_exception_message
       end
     end
   end
@@ -70,7 +74,7 @@ Main {
         puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
           "to load a list of tasks."
       rescue RTM::NoTokenException
-        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+        no_token_exception_message
       end
     end
   end
@@ -90,7 +94,7 @@ Main {
         puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
           "to load a list of tasks."
       rescue RTM::NoTokenException
-        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+        no_token_exception_message
       end
     end
   end
@@ -110,7 +114,7 @@ Main {
         puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
           "to load a list of tasks."
       rescue RTM::NoTokenException
-        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+        no_token_exception_message
       end
     end
   end
@@ -122,7 +126,7 @@ Main {
       begin
         milkmaid.add_task params['taskname'].value
       rescue RTM::NoTokenException
-        puts "Authentication token not found. Run `#{__FILE__} auth start`"
+        no_token_exception_message
       end
     end
   end
