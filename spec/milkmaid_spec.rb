@@ -167,6 +167,12 @@ describe "Milkmaid" do
       end
     end
   end
+
+  it 'cleans out the cache' do
+    YAML.stub(:load_file) {{ :token=>'tsttoken', 'junk'=>'trash' }}
+    should_store_in_configuration({:token=>'tsttoken'})
+    lib.clean
+  end
 end
 
 def should_store_in_configuration(config)

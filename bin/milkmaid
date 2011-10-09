@@ -154,4 +154,12 @@ Main {
       end
     end
   end
+
+  mode :clean do
+    description "Cleans out the config file of cached data."
+
+    def run
+      milkmaid.clean
+    end
+  end
 }

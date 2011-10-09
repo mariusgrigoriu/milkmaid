@@ -91,14 +91,19 @@ class Milkmaid
     save_config
   end
 
+  def clean
+    @config.delete_if { |k| k != :token }
+    save_config
+  end
+
   class TaskNotFound < StandardError
   end
 
+  private
   def self.last_task(taskseries)
     taskseries['task'].as_array.last
   end
 
-  private
   def save_config
     File.open(@config_file, 'w') { |f| YAML.dump(@config, f) }
   end
