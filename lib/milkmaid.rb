@@ -16,7 +16,11 @@ class Milkmaid
   end
 
   def lists
-    @rtm.lists.get_list['lists']['list'].as_array
+    entries = @rtm.lists.get_list['lists']['list'].as_array
+    list_ids = entries.map { |list| list['id'] }
+    @config[:lists] = list_ids
+    save_config
+    entries
   end
   
   def incomplete_tasks

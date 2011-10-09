@@ -36,7 +36,7 @@ Main {
 
     def run
       handle_exceptions do
-        milkmaid.lists.each { |l| puts l['name'] }
+        milkmaid.lists.each_with_index { |list, i| puts "#{i+1}: #{list['name']}" }
       end
     end
   end
