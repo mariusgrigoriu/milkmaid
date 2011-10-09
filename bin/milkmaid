@@ -18,8 +18,8 @@ Main {
     help!
   end
 
-  mode :list do
-    description "Lists all inactive tasks. Tasks that repeat are marked with a (R).\n" +
+  mode :tasks do
+    description "Lists inactive tasks. Tasks that repeat are marked with a (R).\n" +
       "If there is a due date, it appears to the right of the task. Tasks are color\n" +
       "coded by priority the same when viewed on the web. Tasks due today are in bold\n" +
       "while tasks that are overdue are underlined.\n" +
