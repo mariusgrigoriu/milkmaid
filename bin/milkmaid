@@ -156,7 +156,7 @@ Main {
   end
 
   mode :clean do
-    description "Cleans out the config file of cached data."
+    description "Cleans cached data out of the config file."
 
     def run
       milkmaid.clean
