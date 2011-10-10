@@ -1,19 +1,16 @@
 = Milkmaid
-
 Milkmaid is a command-line client for Remember the Milk.
 
 ==Features
-* View a list of incomplete tasks, and their due dates
+* View a list of incomplete tasks, their due dates, and their priorities by list
 * Complete a task
 * Postpone a task
 * Add a new task, setting properties using the Smart Add feature
 
 == Installing
-
-$ gem install milkmaid
+  $ gem install milkmaid
 
 == Authorizing
-
 Before you can connect to your tasks you must authorize the client.
 
 1. $ milkmaid auth start
@@ -23,65 +20,43 @@ Before you can connect to your tasks you must authorize the client.
 Now you are ready to work with your tasks.
 
 == Commands
+Use the -h option to view a list of commands and options for each command.
 
-View a list of incomplete tasks and get task numbers. You will need a task
-number to do things to tasks like completing or postponing them. The task
-number appears at the beginning.
+  $ milkmaid -h
+  $ milkmaid task -h
 
-$ milkmaid task
+== Working with tasks and lists
+Whenever you want to reference a task or list, such as when completing a task or
+viewing tasks within a specific list you must first view the tasks or lists in order
+to load their ID numbers and assign them to a much easier to use local ID.
 
-
-Complete a task
-
-$ milkmaid task complete <task number>
-
-
-Postpone a task
-
-$ milkmaid task postpone <task number>
-
-
-Delete a task
-
-$ milkmaid task delete <task number>
-
-Add a task (Use single quotes to contain the task name)
-
-Adding a task supports Remember the Milk's Smart Add feature. With it you
-can set properties such as the due date, priority, etc.
-
-$ milkmaid task add '<task name>'
+  $ milkmaid list
+  $ milkmaid task
 
 == Version history
-
 === 0.3.0
-
-* Updated command structure. See section above
+* See a list of available lists with the list command
+* View incomplete tasks by list with the -l option
+* Updated command structure. Use the -h option to see commands.
 * Friendly message when unable to connect to server
 
 === 0.2.1
-
 * Fixed auth scenarios
 
 === 0.2.0
-
 * New delete command
 * Friendlier usage information
 
 === 0.1.1
-
 * Fixed an issue when listing tasks with recurrences that were completed
 
 === 0.1.0
-
 * Initial version
 
 == Contact me
-
 Follow me on twitter: @mariusgrigoriu
 
 == Contributing to Milkmaid
- 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
@@ -91,7 +66,6 @@ Follow me on twitter: @mariusgrigoriu
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
 == Copyright
-
 Copyright (c) 2011 Marius Grigoriu. See LICENSE.txt for
 further details.
 
