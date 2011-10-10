@@ -23,10 +23,19 @@ class Milkmaid
     entries
   end
   
-  def incomplete_tasks
+  def incomplete_tasks(list=nil)
+    params = {}
+    unless list.nil?
+      if @config[:lists]
+        list = @config[:lists][list-1]
+        params[:list_id] = list unless list.nil?
+      end
+      raise ListNotFound if params.empty?
+    end
     entries = []
     list_id = nil
-    @rtm.tasks.get_list['tasks']['list'].as_array.each do |items|
+    @rtm.tasks.get_list(params)['tasks']['list'].
+      as_array.each do |items|
       list_id = items['id']
       if !items['taskseries'].nil?
         items['taskseries'].as_array.each do |taskseries|
@@ -97,6 +106,9 @@ class Milkmaid
   end
 
   class TaskNotFound < StandardError
+  end
+
+  class ListNotFound < StandardError
   end
 
   private

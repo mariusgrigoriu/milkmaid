@@ -16,8 +16,11 @@ def handle_exceptions
   rescue RTM::NoTokenException
     puts "Authentication token not found. Run `#{__FILE__} auth start`"
   rescue Milkmaid::TaskNotFound
-    puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} list` " +
+    puts "Task ##{params['tasknum'].value} not found. Run `#{__FILE__} task` " +
       "to load a list of tasks."
+  rescue Milkmaid::ListNotFound
+    puts "List ##{params['listnum'].value} not found. Run `#{__FILE__} list` " +
+      "to load lists."
   rescue Errno::ETIMEDOUT
     puts "Unable to connect to the server. Please try again later."
   end
@@ -47,15 +50,24 @@ Main {
       "coded by priority the same when viewed on the web. Tasks due today are in bold\n" +
       "while tasks that are overdue are underlined.\n" +
       "Use this command to assign a number to tasks so you may perform other actions."
-
+    
+    option('listnum','l') {
+      argument :optional
+      cast :int
+      description <<-EOD
+      Show tasks that belong to the given list. Use the number as printed by the
+      list command.
+      EOD
+    }
+    
     def run
       handle_exceptions do
-        milkmaid.incomplete_tasks.each_with_index do |taskseries, i|
-          task = Milkmaid::last_task taskseries
-          text = "#{i+1}: #{taskseries['name']}"
-          text << "(R)" unless taskseries['rrule'].nil?
-          text << " #{Time.parse(Milkmaid::last_task(taskseries)['due']).getlocal.strftime(
-          "%A %b %d, %Y %I:%M %p")}" unless task['due'].empty?
+        milkmaid.incomplete_tasks(params['listnum'].value).each_with_index do |ts, i|
+          task = Milkmaid::last_task ts
+          text = "#{i+1}: #{ts['name']}"
+          text << "(R)" unless ts['rrule'].nil?
+          text << " #{Time.parse(Milkmaid::last_task(ts)['due']).getlocal.strftime(
+            "%A %b %d, %Y %I:%M %p")}" unless task['due'].empty?
           color = {
             '1'=>[234, 82, 0], 
             '2'=>[0, 96, 191], 

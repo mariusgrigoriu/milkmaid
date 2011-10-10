@@ -70,8 +70,7 @@ describe "Milkmaid" do
                                       "id"=>"ct", "due"=>"2012-10-02T02:52:58Z"}}}
     let(:d) {{"name"=>"d", "id"=>"dts", "task"=>{"completed"=>"", "priority"=>"N",
                                       "id"=>"dt", "due"=>"2011-10-02T02:52:58Z"}}}
-    before do
-      RTM::RTM.stub_chain(:new, :tasks, :get_list) { 
+    let(:response) {
         {"tasks"=>{"list"=>[{"id"=>"21242147", "taskseries"=>[
           a, b, c, d,
           {"name"=>"done task", "task"=>{"completed"=>"2011-10-02T02:52:58Z"}}
@@ -83,7 +82,40 @@ describe "Milkmaid" do
         {"id"=>"21242152"}], 
         "rev"=>"4k555btb3vcwscc8g44sog8kw4ccccc"}, 
         "stat"=>"ok"}
-      }
+    }
+
+    before do
+      tasks_double.stub(:get_list).and_return(response)
+    end
+
+    context 'when a list number is provided' do
+      it 'passes in a list_id if the list number is found' do
+        YAML.stub(:load_file) {{
+          :token=>'tsttoken',
+          :lists=>['tstlistid']
+        }}
+        tasks_double.should_receive(:get_list).with(:list_id=>'tstlistid')
+        lib.incomplete_tasks 1
+      end
+
+      it 'does not pass in a list_id if the list number is not found' do
+        YAML.stub(:load_file) {{
+          :token=>'tsttoken',
+          :lists=>['tstlistid']
+        }}
+        lambda { lib.incomplete_tasks 2 }.should raise_error(Milkmaid::ListNotFound)
+      end
+
+      it 'does not pass in a list_id if the list cache does not exist' do
+        lambda { lib.incomplete_tasks 2 }.should raise_error(Milkmaid::ListNotFound)
+      end
+    end
+
+    context 'when a list number is not provided' do
+      it 'does not pass in a list_id' do
+        tasks_double.should_receive(:get_list).with({})
+        lib.incomplete_tasks
+      end
     end
 
     it "returns all incomplete tasks in order of priority then due date" do
