@@ -101,7 +101,7 @@ class Milkmaid
   end
 
   def clean
-    @config.delete_if { |k| k != :token }
+    @config.delete_if { |k, v| k != :token }
     save_config
   end
 
